@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b14">
+<title>MindForge — тренировка мозга</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Inter,Arial,sans-serif;background:radial-gradient(circle at 15% 0,#1b2857 0,transparent 34%),radial-gradient(circle at 100% 100%,#281343 0,transparent 38%),#080b14;color:#f5f7ff;min-height:100vh}
+button,input{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+header{padding:20px max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right));display:flex;justify-content:space-between;align-items:center;max-width:1150px;margin:auto}
+.logo{font-size:25px;font-weight:900;letter-spacing:-1px}.logo span{color:#7c8cff}
+.stats-mini{display:flex;gap:10px}.mini-stat{background:#ffffff0d;border:1px solid #ffffff12;padding:9px 13px;border-radius:12px;color:#bfc5dd}
+.container{width:min(1100px,92%);margin:15px auto 60px}.hero{padding:35px 0}.hero h1{font-size:clamp(38px,7vw,68px);line-height:.95;letter-spacing:-3px}.hero p{margin-top:18px;color:#9da5c2;font-size:17px}
+.modules{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:15px}.card{background:#ffffff0d;border:1px solid #ffffff12;border-radius:22px;padding:22px;box-shadow:0 15px 45px #0002}
+.card .icon{font-size:34px;margin-bottom:15px}.card h3{font-size:20px}.card p{color:#929ab6;margin:8px 0 18px;line-height:1.4}
+button{border:0;border-radius:13px;padding:13px 18px;background:#7382ff;color:#fff;font-weight:800;transition:.15s;min-height:46px}button:active{transform:scale(.97)}button.secondary{background:#ffffff10}
+.game{display:none;margin-top:20px}.game.active{display:block}.game-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}.game-header h2{font-size:27px}
+.game-box{min-height:390px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center}.problem{font-size:clamp(42px,9vw,78px);font-weight:900;margin:25px}.answer{width:min(420px,92%);padding:16px;border-radius:14px;border:1px solid #343a59;background:#101424;color:#fff;outline:0;text-align:center;font-size:22px}.answer:focus{border-color:#7382ff}.result{margin-top:18px;min-height:28px;font-weight:800}.big-number{font-size:clamp(45px,11vw,100px);font-weight:900;letter-spacing:5px}.sequence{font-size:clamp(28px,6vw,55px);font-weight:900;letter-spacing:5px;margin:25px}
+.reaction-area{width:min(650px,94%);height:250px;border-radius:25px;display:flex;align-items:center;justify-content:center;background:#181d31;font-size:28px;font-weight:900;user-select:none;touch-action:manipulation}
+.schulte{display:grid;grid-template-columns:repeat(5,1fr);width:min(500px,90vw);aspect-ratio:1;gap:7px;margin:20px auto}.schulte button{background:#171c2e;border:1px solid #2c3350;padding:0;font-size:20px}
+.progress{width:min(500px,90%);height:7px;background:#1b2033;border-radius:20px;overflow:hidden;margin-top:20px}.progress div{height:100%;width:0;background:#7382ff}
+.dashboard{margin-top:40px}.dashboard h2{margin-bottom:18px}.dashboard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.stat-box{background:#ffffff0d;border-radius:16px;padding:18px}.stat-box small{color:#858eaa}.stat-box strong{display:block;font-size:29px;margin-top:7px}.hidden{display:none!important}.back{margin-bottom:15px}
+@media(max-width:600px){header{padding-top:16px}.stats-mini{display:none}.hero{padding-top:20px}.hero h1{letter-spacing:-2px}.game-box{min-height:340px}.card{padding:18px}}
+</style>
+</head>
+<body>
+<header><div class="logo">Mind<span>Forge</span></div><div class="stats-mini"><div class="mini-stat">🔥 Серия: <b id="headerStreak">0</b></div><div class="mini-stat">🏆 Очки: <b id="headerScore">0</b></div></div></header>
+<div class="container">
+<section id="home">
+<div class="hero"><h1>Тренируй мозг.<br><span style="color:#7c8cff">Каждый день.</span></h1><p>Устный счёт, память, скорость реакции, логика и концентрация.</p></div>
+<div class="modules">
+<div class="card"><div class="icon">🧮</div><h3>Устный счёт</h3><p>Решай примеры максимально быстро.</p><button onclick="startMath()">Начать</button></div>
+<div class="card"><div class="icon">🧠</div><h3>Память</h3><p>Запомни последовательность чисел.</p><button onclick="startMemory()">Начать</button></div>
+<div class="card"><div class="icon">🔢</div><h3>Последовательности</h3><p>Найди закономерность и продолжи ряд.</p><button onclick="startSequence()">Начать</button></div>
+<div class="card"><div class="icon">⚡</div><h3>Реакция</h3><p>Нажми, когда появится сигнал.</p><button onclick="startReaction()">Начать</button></div>
+<div class="card"><div class="icon">🔲</div><h3>Таблица Шульте</h3><p>Найди числа от 1 до 25 как можно быстрее.</p><button onclick="startSchulte()">Начать</button></div>
+</div>
+<div class="dashboard"><h2>Твоя статистика</h2><div class="dashboard-grid">
+<div class="stat-box"><small>Всего очков</small><strong id="totalScore">0</strong></div>
+<div class="stat-box"><small>Решено примеров</small><strong id="mathSolved">0</strong></div>
+<div class="stat-box"><small>Точность</small><strong id="accuracy">0%</strong></div>
+<div class="stat-box"><small>Лучшая реакция</small><strong id="bestReaction">—</strong></div>
+<div class="stat-box"><small>Лучший Шульте</small><strong id="bestSchulte">—</strong></div>
+<div class="stat-box"><small>Серия</small><strong id="streak">0</strong></div>
+</div></div>
+</section>
+
+<section id="mathGame" class="game"><button class="secondary back" onclick="goHome()">← Назад</button><div class="card game-box"><div class="game-header" style="width:100%"><h2>🧮 Устный счёт</h2><div>Очки: <span id="mathPoints">0</span></div></div><div class="problem" id="mathProblem">...</div><input id="mathAnswer" class="answer" type="number" inputmode="numeric" placeholder="Ответ"><button style="margin-top:15px" onclick="checkMath()">Ответить</button><div id="mathResult" class="result"></div></div></section>
+
+<section id="memoryGame" class="game"><button class="secondary back" onclick="goHome()">← Назад</button><div class="card game-box"><h2>🧠 Память</h2><div id="memoryNumber" class="big-number">READY</div><input id="memoryAnswer" class="answer hidden" type="text" inputmode="numeric" placeholder="Введи число"><button id="memoryButton" onclick="memoryAction()">Запомнить</button><div id="memoryResult" class="result"></div><div class="progress"><div id="memoryProgress"></div></div></div></section>
+
+<section id="sequenceGame" class="game"><button class="secondary back" onclick="goHome()">← Назад</button><div class="card game-box"><h2>🔢 Последовательность</h2><div class="sequence" id="sequenceText">...</div><input id="sequenceAnswer" class="answer" type="number" inputmode="numeric" placeholder="Следующее число"><button style="margin-top:15px" onclick="checkSequence()">Ответить</button><div id="sequenceResult" class="result"></div></div></section>
+
+<section id="reactionGame" class="game"><button class="secondary back" onclick="goHome()">← Назад</button><div class="card game-box"><h2>⚡ Реакция</h2><p style="color:#8f97b3;margin:15px">Нажми на поле, когда оно изменится.</p><div id="reactionArea" class="reaction-area" onclick="reactionClick()">Нажми «Старт»</div><button style="margin-top:20px" onclick="startReactionRound()">Старт</button><div id="reactionResult" class="result"></div></div></section>
+
+<section id="schulteGame" class="game"><button class="secondary back" onclick="goHome()">← Назад</button><div class="card game-box"><h2>🔲 Таблица Шульте</h2><p style="color:#8f97b3;margin:10px">Нажимай числа от 1 до 25 по порядку.</p><div id="schulte" class="schulte"></div><div id="schulteResult" class="result"></div><button onclick="startSchulte()">Новая таблица</button></div></section>
+</div>
+
+<script>
+let data=JSON.parse(localStorage.getItem("mindforge")||"null")||{score:0,solved:0,correct:0,streak:0,bestReaction:null,bestSchulte:null};
+function save(){localStorage.setItem("mindforge",JSON.stringify(data));updateStats()}
+function updateStats(){totalScore.textContent=data.score;mathSolved.textContent=data.solved;accuracy.textContent=(data.solved?Math.round(data.correct/data.solved*100):0)+"%";bestReaction.textContent=data.bestReaction?data.bestReaction+" мс":"—";bestSchulte.textContent=data.bestSchulte?data.bestSchulte+" с":"—";streak.textContent=data.streak;headerScore.textContent=data.score;headerStreak.textContent=data.streak}
+updateStats();
+function goHome(){document.querySelectorAll(".game").forEach(x=>x.classList.remove("active"));home.style.display="block";updateStats()}
+function openGame(id){home.style.display="none";document.querySelectorAll(".game").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active")}
+function randomInt(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+
+let mathAnswer=0,mathPoints=0;
+function startMath(){openGame("mathGame");mathPoints=0;mathPointsEl.textContent=0;mathResult.textContent="";newMathQuestion()}
+function newMathQuestion(){let level=Math.min(5,Math.floor(data.solved/10)+1),a,b,op;if(level===1){a=randomInt(1,20);b=randomInt(1,20);op=Math.random()>.5?"+":"-"}else{a=randomInt(10*level,80*level);b=randomInt(2,20*level);op=["+","-","×"][randomInt(0,2)]}mathAnswer=op==="+"?a+b:op==="-"?a-b:a*b;mathProblem.textContent=`${a} ${op} ${b}`;mathAnswerInput.value="";mathAnswerInput.focus()}
+const mathAnswerInput=document.getElementById("mathAnswer"),mathPointsEl=document.getElementById("mathPoints");
+function checkMath(){let v=Number(mathAnswerInput.value);data.solved++;if(v===mathAnswer){data.correct++;data.score+=10;data.streak++;mathPoints+=10;mathResult.textContent="✓ Верно"}else{data.streak=0;mathResult.textContent=`✗ Ответ: ${mathAnswer}`}mathPointsEl.textContent=mathPoints;save();setTimeout(newMathQuestion,600)}
+mathAnswerInput.addEventListener("keydown",e=>{if(e.key==="Enter")checkMath()});
+
+let memoryValue="",memoryStage=0,memoryLength=3;
+function startMemory(){openGame("memoryGame");memoryStage=0;memoryLength=Math.min(10,3+Math.floor(data.correct/5));memoryAnswer.classList.add("hidden");memoryButton.classList.remove("hidden");memoryButton.textContent="Запомнить";memoryResult.textContent="";memoryNumber.textContent="READY";memoryProgress.style.width="0%"}
+function memoryAction(){if(memoryStage===0){memoryValue="";for(let i=0;i<memoryLength;i++)memoryValue+=randomInt(0,9);memoryStage=1;memoryNumber.textContent=memoryValue;memoryButton.classList.add("hidden");let start=Date.now();let int=setInterval(()=>{let p=Math.min(100,(Date.now()-start)/2000*100);memoryProgress.style.width=p+"%";if(p>=100){clearInterval(int);memoryNumber.textContent="???";memoryAnswer.classList.remove("hidden");memoryButton.classList.remove("hidden");memoryButton.textContent="Проверить";memoryAnswer.value="";memoryAnswer.focus()}},20)}else{let v=memoryAnswer.value.trim();if(v===memoryValue){data.score+=memoryLength*15;data.streak++;memoryResult.textContent="✓ Отлично. Правильно."}else{data.streak=0;memoryResult.textContent=`✗ Было: ${memoryValue}`}save();memoryButton.textContent="Следующий";memoryStage=0}}
+const memoryNumber=document.getElementById("memoryNumber"),memoryAnswer=document.getElementById("memoryAnswer"),memoryButton=document.getElementById("memoryButton"),memoryResult=document.getElementById("memoryResult"),memoryProgress=document.getElementById("memoryProgress");
+
+let sequenceAnswer=0;
+function startSequence(){openGame("sequenceGame");createSequence()}
+function createSequence(){let type=randomInt(1,4),s=randomInt(2,15),step=randomInt(2,10),n=[];if(type===1){for(let i=0;i<4;i++)n.push(s+step*i);sequenceAnswer=s+step*4}else if(type===2){for(let i=0;i<4;i++)n.push(s*Math.pow(2,i));sequenceAnswer=s*16}else if(type===3){for(let i=0;i<4;i++)n.push(s+i*i);sequenceAnswer=s+16}else{for(let i=0;i<4;i++)n.push(s*(i+1));sequenceAnswer=s*5}sequenceText.textContent=n.join("   ")+"   ?";sequenceAnswerInput.value="";sequenceResult.textContent="";sequenceAnswerInput.focus()}
+const sequenceAnswerInput=document.getElementById("sequenceAnswer");
+function checkSequence(){if(Number(sequenceAnswerInput.value)===sequenceAnswer){data.score+=20;data.streak++;sequenceResult.textContent="✓ Верно"}else{data.streak=0;sequenceResult.textContent=`✗ Ответ: ${sequenceAnswer}`}save();setTimeout(createSequence,800)}
+
+let reactionReady=false,reactionStart=0,reactionTimeout;
+function startReaction(){openGame("reactionGame");reactionArea.textContent="Нажми «Старт»";reactionArea.style.background="#181d31";reactionResult.textContent="";reactionReady=false}
+function startReactionRound(){clearTimeout(reactionTimeout);reactionArea.textContent="Жди...";reactionArea.style.background="#181d31";reactionReady=false;reactionTimeout=setTimeout(()=>{reactionArea.textContent="НАЖМИ!";reactionArea.style.background="#6c75ff";reactionReady=true;reactionStart=performance.now()},randomInt(1500,4500))}
+function reactionClick(){if(!reactionReady)return;let t=Math.round(performance.now()-reactionStart);reactionReady=false;reactionArea.textContent=t+" мс";reactionArea.style.background="#181d31";reactionResult.textContent=t<250?"🔥 Очень быстро":t<350?"✓ Хорошая реакция":"Можно быстрее";if(data.bestReaction===null||t<data.bestReaction)data.bestReaction=t;data.score+=Math.max(5,500-t);data.streak++;save()}
+
+let schulteNext=1,schulteStart=0;
+function startSchulte(){openGame("schulteGame");schulteNext=1;schulteStart=performance.now();schulteResult.textContent="";let n=[];for(let i=1;i<=25;i++)n.push(i);n.sort(()=>Math.random()-.5);schulte.innerHTML="";n.forEach(x=>{let b=document.createElement("button");b.textContent=x;b.onclick=()=>schulteClick(b,x);schulte.appendChild(b)})}
+function schulteClick(b,n){if(n!==schulteNext)return;b.style.opacity=".2";b.disabled=true;schulteNext++;if(schulteNext>25){let t=((performance.now()-schulteStart)/1000).toFixed(2);schulteResult.textContent=`✓ Результат: ${t} секунд`;if(data.bestSchulte===null||Number(t)<Number(data.bestSchulte))data.bestSchulte=t;data.score+=Math.max(10,Math.round(300-t*10));data.streak++;save()}}
+document.addEventListener("keydown",e=>{if(e.key==="Escape")goHome()});
+</script>
+</body>
+</html>
